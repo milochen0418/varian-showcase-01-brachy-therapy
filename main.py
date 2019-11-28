@@ -1,5 +1,6 @@
 import os
 import datetime
+import sys, getopt
 def log_current_time(tag_str, status):
     timefmt = "%Y-%m%d-%H:%M:%S.%f"
     now = datetime.datetime.now()
@@ -108,11 +109,6 @@ def generate_rs_rp_by_ct_folder(input_ct_folder, output_rs_rp_folder, model_name
     copyfile(rp_src_filepath, rp_dst_filepath)
     print("rs_dst_filepath = {}".format(rs_dst_filepath))
     print("rp_dst_filepath = {}".format(rp_dst_filepath))
-
-
-
-
-
 def dev_test_code_running():
     # example code of how to gen RS from CT folder
     def example_of_gen_rs():
@@ -141,10 +137,43 @@ def dev_test_code_running():
     example_of_gen_rs_rp()
     pass
 
+def main(argv):
+    inputfolder = ""
+    outputfolder = ""
+    try:
+        opts, args = getopt.getopt(argv,"hi:o:",["inputfolder=","outputfolder="])
+    except getopt.GetoptError:
+        print('main.py -i <inputfolder> -o <outputfolder>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('main.py -i <inputfolder> -o <outputfolder>')
+            sys.exit()
+        elif opt in ("-i", "--inputfolder"):
+            inputfolder = arg
+        elif opt in ("-o", "--outputfolder"):
+            outputfolder = arg
+    print('Input Folder is {}'.format(inputfolder))
+    print('Output Folder is {}'.format(outputfolder))
+    if inputfolder != "" and outputfolder != "":
+        print('Run programming')
+        #input_folder = r"ShowCase01Test-Input-29059811"
+        #output_folder = r"ShowCase01Test-Output-29059811"
+        input_folder = inputfolder
+        output_folder = outputfolder
+        generate_rs_rp_by_ct_folder(
+            input_ct_folder=input_folder,
+            output_rs_rp_folder=output_folder,
+            model_name="MRCNN_Brachy")
+    else:
+        print("Do nothing because you don't set some of input folder or output folder. ")
+        print("You may try the following command ")
+        print("$ python main.py -i ShowCase01Test-Input-29059811 -o ShowCase01Test-Output-29059811")
 
 if __name__ == "__main__":
-    #example_of_gen_rs()
-    dev_test_code_running()
+    #dev_test_code_running()
+    main(sys.argv[1:])
+
     exit()
 
 

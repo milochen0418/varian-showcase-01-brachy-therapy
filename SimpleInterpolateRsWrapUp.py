@@ -10,8 +10,6 @@ Thickness_table = {}
 lastGetDateFromCT = None
 SOPInstanceUID_list_of_CTs = None
 
-
-
 def pydicom_read_rs_template(ct_filelist, rs_template_filepath):
     print("get_temp_rs() is calling with rs_template_filepath = ", rs_template_filepath, ", and ct_filelist = ", ct_filelist)
     titles = {'Accession Number',
@@ -47,12 +45,8 @@ def pydicom_read_rs_template(ct_filelist, rs_template_filepath):
 
 def make_SOPInstnaceUID_list_of_CTs(filelist):
     global SOPInstanceUID_list_of_CTs
-    #ct_folder_filepath = Env.REMOTE_FOLDER_OF_CT_WITH_PID
     SOPInstanceUID_list_of_CTs = []
-    #ct_folder = ct_folder_filepath
-    #for file in os.listdir(ct_folder):
     for filepath in filelist:
-        #filepath = "{}\\{}".format(ct_folder, file)
         ct_fp = None
         try:
             ct_fp = pydicom.read_file(filepath)
@@ -60,8 +54,6 @@ def make_SOPInstnaceUID_list_of_CTs(filelist):
             pass
         if ct_fp == None:
             continue
-
-        #print( "z={} -> uid={}".format(ct_fp.ImagePositionPatient[2], ct_fp.SOPInstanceUID) )
         uid = ct_fp.SOPInstanceUID
         SOPInstanceUID_list_of_CTs.append(uid)
 
@@ -71,13 +63,9 @@ def make_some_tables(input_ct_filelist):
     global Thickness_table
     global lastGetDateFromCT
     global SOPInstanceUID_list_of_CTs
-    #folder_path = Env.FOLDER_PATH_OF_CT
-    #folder_path = Env.REMOTE_FOLDER_OF_CT_WITH_PID
-    #print("make_some_table() -> folder_path = ", folder_path)
 
     for ctdcm in input_ct_filelist:
         filepath = ctdcm
-        #print("filepath = ", filepath)
         ct_fp = None
         try :
             ct_fp = pydicom.read_file(filepath)
@@ -85,7 +73,7 @@ def make_some_tables(input_ct_filelist):
             pass
         if ct_fp == None:
             continue
-        #print("passed filepath = ", filepath)
+
         lastGetDateFromCT = ct_fp.StudyDate
 
         z = float(ct_fp.ImagePositionPatient[2])
@@ -93,7 +81,7 @@ def make_some_tables(input_ct_filelist):
         thickness = ct_fp.SliceThickness
         CT_table[z] = uid
         Thickness_table[z] = thickness
-        #print("z = ", z, ", uid = ",uid, ", Thickness_table = ", Thickness_table)
+
 
 
 def find_nearest(array, value):
@@ -102,26 +90,18 @@ def find_nearest(array, value):
     return array[idx]
 
 def interpolate_and_wrapup_rs(input_mrcnn_out, input_ct_filelist, output_rs_filepath_after_ai):
-    #RS_TEMPLATE_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/RS_Template/RS.1.2.246.352.71.4.417454940236.267194.20190411111011.dcm"
     RS_TEMPLATE_FILEPATH = r"../ModelsAndRSTemplates/Brachy/RS_Template/RS.1.2.246.352.71.4.417454940236.267194.20190411111011.dcm"
     print("call interpolate_and_wrapup_rs()")
-    #print("with arg input_mrcnn_out  = {}", input_mrcnn_out)
     print("with arg input_ct_filelist = {}", input_ct_filelist)
     print("with arg output_rs_filepath_after_ai = {}", output_rs_filepath_after_ai)
     import datetime
     import traceback
     from pydicom.dataset import Dataset, DataElement
-    #from pydicom.dataset import Dataset, DataElement
-
-    #save rs file into the filepath = output_rs_filepath_after_ai
     global CT_table
     global Thickness_table
     CT_table = {}
     Thickness_table = {}
-
-
     rs_fp = pydicom_read_rs_template(input_ct_filelist, RS_TEMPLATE_FILEPATH)
-
     ct_FrameOfReferenceUID = None
     ct_StudyInstnaceUID = None
     for filepath in input_ct_filelist:
@@ -130,31 +110,16 @@ def interpolate_and_wrapup_rs(input_mrcnn_out, input_ct_filelist, output_rs_file
         ct_StudyInstanceUID = ct_fp.StudyInstanceUID
         break
 
-
-    #now = datetime.datetime.now()
-    #theDateForSOPInstanceUID = now.strftime("%Y%m%d%H%M%S")
-    #uid = "1.2.246.352.71.4.417454940236.267194.{}".format(theDateForSOPInstanceUID)
-
-
-
-
     # ================== process_rs() start ===========================
     global SOPInstanceUID_list_of_CTs
-
-
-
     label_id_mask = input_mrcnn_out
     labels = list(label_id_mask.keys())
-
-
-
 
     # =================== Generate Color Mapping ===========================
     print("print(labels)=============================================")
     print(labels)
     # ['bowel', 'Uterus', 'HR-CTV', 'Sigmoid_colon', 'Rectum', 'Bladder', 'Foley']
     print("print(labels)=============================================")
-
     # For Brachy template, labels is like ['bowel', 'Uterus', 'HR-CTV', 'Sigmoid_colon', 'Rectum', 'Bladder', 'Foley']
     colors = []
     # disable code by milochen
@@ -238,8 +203,6 @@ def interpolate_and_wrapup_rs(input_mrcnn_out, input_ct_filelist, output_rs_file
     now = datetime.datetime.now()
     theDateForSeriesInstanceUID = now.strftime("%Y%m%d%H%M%S%f")
     rs_fp.SeriesInstanceUID = "1.2.246.352.71.2.417454940236.3986270." + theDateForSeriesInstanceUID
-    # The format of our new SeriesInstanceUID is like this 1.2.246.352.71.2.417454940236.3986270.20190627171748535000
-
     rs_fp.ReferencedFrameOfReferenceSequence[0].FrameOfReferenceUID = ct_FrameOfReferenceUID
     rs_fp.ReferencedFrameOfReferenceSequence[0].RTReferencedStudySequence[0].ReferencedSOPInstanceUID = rs_fp.StudyInstanceUID
     rs_fp.ReferencedFrameOfReferenceSequence[0].RTReferencedStudySequence[0].RTReferencedSeriesSequence[0].ContourImageSequence.clear()
@@ -327,15 +290,8 @@ def interpolate_and_wrapup_rs(input_mrcnn_out, input_ct_filelist, output_rs_file
 
     # ========
 
-
-
     #Start to Interpolate
-
     make_some_tables(input_ct_filelist)
-
-    #print("input rs filepath for process_label_after_AI = ", Env.FILE_PATH_OF_RS)
-
-
     for i in range(len(rs_fp.ROIContourSequence)):
         try:
             item = rs_fp.ROIContourSequence[i].ContourSequence

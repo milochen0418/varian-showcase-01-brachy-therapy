@@ -35,7 +35,8 @@ def generate_rs_by_ct_folder(input_ct_folder, output_rs_filepath, model_name):
 
     log_current_time("InterpolateWrapper_process", "START")
     #sirw.interpolate_and_wrapup_rs(mrcnn_out, ct_filelist, "RS.output.dcm")
-    interpolate_and_wrapup_rs(mrcnn_out, ct_filelist, "RS.output.dcm")
+    interpolate_and_wrapup_rs(mrcnn_out, ct_filelist, output_rs_filepath)
+    #os.path.join(temp_folder, r'RS.output.dcm')
     log_current_time("InterpolateWrapper_process", "STOP")
 def generate_rp_by_ct_rs_folder(input_ct_rs_folder, output_rp_filepath):
     from utilities import generate_metadata_to_dicom_dict
@@ -69,23 +70,25 @@ def generate_rs_rp_by_ct_folder(input_ct_folder, output_rs_rp_folder, model_name
     input_folder = "TestCase_Input_CtFolder"
     output_folder = "OutputFolder"
     temp_folder = r"temp"
-    create_directory_if_not_exists(temp_folder)
-    clean_all_files_in_folder(temp_folder)
+    # create_directory_if_not_exists(temp_folder)
+    # clean_all_files_in_folder(temp_folder)
     # Step 1. copy all ct file from input folder to temp folder
-    for file in os.listdir(input_folder):
-        filepath = os.path.join(input_folder, file)
-        try:
-            fp = pydicom.read_file(filepath)
-            if fp.Modality == 'CT':
-                src_ct_filepath = filepath
-                dst_ct_filepath = os.path.join(temp_folder, os.path.basename(filepath))
-                copyfile(src_ct_filepath, dst_ct_filepath)
-        except:
-            pass
-    # Step 2. gen rs in the temp folder
+    # for file in os.listdir(input_folder):
+    #     filepath = os.path.join(input_folder, file)
+    #     try:
+    #         fp = pydicom.read_file(filepath)
+    #         if fp.Modality == 'CT':
+    #             src_ct_filepath = filepath
+    #             dst_ct_filepath = os.path.join(temp_folder, os.path.basename(filepath))
+    #             copyfile(src_ct_filepath, dst_ct_filepath)
+    #     except:
+    #         pass
+    rs_filepath = os.path.join(temp_folder, r'RS.output.dcm')
+    print('FUCK rs_filepath = {}'.format(rs_filepath))
+    #Step 2. gen rs in the temp folder
     generate_rs_by_ct_folder(
         input_ct_folder=temp_folder,
-        output_rs_filepath=os.path.join(temp_folder, r'RS.output.dcm'),
+        output_rs_filepath=rs_filepath,
         model_name="MRCNN_Brachy"
     )
 

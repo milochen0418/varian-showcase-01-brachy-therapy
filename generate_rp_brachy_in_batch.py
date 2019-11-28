@@ -91,6 +91,7 @@ def get_dicom_dict(folder):
     out_dict['pathinfo'] = pathinfo
 
     rs_filepath = out_dict['pathinfo']['rs_filepath']
+    print('rs_filepath = {}'.format(rs_filepath))
     rs_fp = pydicom.read_file(rs_filepath)
     out_dict['metadata']['RS_StudyDate'] = rs_fp.StudyDate
     out_dict['metadata']['RS_PatientID'] = rs_fp.PatientID

@@ -71,7 +71,7 @@ def get_dataset():
 
 def get_model():
     #MASKRCNN_MODEL_WEIGHT_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
-    MASKRCNN_MODEL_WEIGHT_FILEPATH = r"../Milo/ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
+    MASKRCNN_MODEL_WEIGHT_FILEPATH = r"../ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
     import tensorflow as tf
     # changed by milochen
     # import Mult_Class

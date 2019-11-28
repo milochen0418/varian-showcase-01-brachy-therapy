@@ -102,7 +102,8 @@ def find_nearest(array, value):
     return array[idx]
 
 def interpolate_and_wrapup_rs(input_mrcnn_out, input_ct_filelist, output_rs_filepath_after_ai):
-    RS_TEMPLATE_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/RS_Template/RS.1.2.246.352.71.4.417454940236.267194.20190411111011.dcm"
+    #RS_TEMPLATE_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/RS_Template/RS.1.2.246.352.71.4.417454940236.267194.20190411111011.dcm"
+    RS_TEMPLATE_FILEPATH = r"../ModelsAndRSTemplates/Brachy/RS_Template/RS.1.2.246.352.71.4.417454940236.267194.20190411111011.dcm"
     print("call interpolate_and_wrapup_rs()")
     #print("with arg input_mrcnn_out  = {}", input_mrcnn_out)
     print("with arg input_ct_filelist = {}", input_ct_filelist)

@@ -41,8 +41,6 @@ def pydicom_read_rs_template(ct_filelist, rs_template_filepath):
         if title in ct_fp_title:
             rs_fp[rs_fp_title[title]].value = ct_fp[ct_fp_title[title]].value
     return rs_fp
-
-
 def make_SOPInstnaceUID_list_of_CTs(filelist):
     global SOPInstanceUID_list_of_CTs
     SOPInstanceUID_list_of_CTs = []
@@ -56,7 +54,6 @@ def make_SOPInstnaceUID_list_of_CTs(filelist):
             continue
         uid = ct_fp.SOPInstanceUID
         SOPInstanceUID_list_of_CTs.append(uid)
-
 def make_some_tables(input_ct_filelist):
     print("make_some_tables")
     global CT_table
@@ -81,14 +78,10 @@ def make_some_tables(input_ct_filelist):
         thickness = ct_fp.SliceThickness
         CT_table[z] = uid
         Thickness_table[z] = thickness
-
-
-
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return array[idx]
-
 def interpolate_and_wrapup_rs(input_mrcnn_out, input_ct_filelist, output_rs_filepath_after_ai):
     RS_TEMPLATE_FILEPATH = r"../ModelsAndRSTemplates/Brachy/RS_Template/RS.1.2.246.352.71.4.417454940236.267194.20190411111011.dcm"
     print("call interpolate_and_wrapup_rs()")

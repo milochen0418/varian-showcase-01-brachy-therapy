@@ -149,7 +149,8 @@ def AI_process_by_folder(folder ,model_name):
         filelist.append(filepath)
     return AI_process(filelist, model_name)
 
-def AI_process(filelist, model_name):
+#def AI_process(filelist, model_name):
+def AI_process_get_predict_result(filelist, model_name):
     print("AI_process is calling...")
     print("with model_name = {} and filelist = {}".format(model_name, filelist) )
     # PS: Assume input CT files folder that only put one Study Case for one patient

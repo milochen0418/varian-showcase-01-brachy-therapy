@@ -67,53 +67,49 @@ def generate_rs_rp_by_ct_folder(input_ct_folder, output_rs_rp_folder, model_name
     from shutil import copyfile
     import pydicom
     model_name = "MRCNN_Brachy"
-    input_folder = "TestCase_Input_CtFolder"
-    output_folder = "OutputFolder"
+    input_folder = input_ct_folder
+    output_folder = output_rs_rp_folder
     temp_folder = r"temp"
-    # create_directory_if_not_exists(temp_folder)
-    # clean_all_files_in_folder(temp_folder)
+    create_directory_if_not_exists(temp_folder)
+    clean_all_files_in_folder(temp_folder)
     # Step 1. copy all ct file from input folder to temp folder
-    # for file in os.listdir(input_folder):
-    #     filepath = os.path.join(input_folder, file)
-    #     try:
-    #         fp = pydicom.read_file(filepath)
-    #         if fp.Modality == 'CT':
-    #             src_ct_filepath = filepath
-    #             dst_ct_filepath = os.path.join(temp_folder, os.path.basename(filepath))
-    #             copyfile(src_ct_filepath, dst_ct_filepath)
-    #     except:
-    #         pass
-    rs_filepath = os.path.join(temp_folder, r'RS.output.dcm')
-    print('FUCK rs_filepath = {}'.format(rs_filepath))
+    for file in os.listdir(input_folder):
+        filepath = os.path.join(input_folder, file)
+        try:
+            fp = pydicom.read_file(filepath)
+            if fp.Modality == 'CT':
+                src_ct_filepath = filepath
+                dst_ct_filepath = os.path.join(temp_folder, os.path.basename(filepath))
+                copyfile(src_ct_filepath, dst_ct_filepath)
+        except:
+            pass
+
+    temp_rs_filepath = os.path.join(temp_folder, r'RS.output.dcm')
+    temp_rp_filepath = os.path.join(temp_folder, r'RP.output.dcm')
     #Step 2. gen rs in the temp folder
     generate_rs_by_ct_folder(
         input_ct_folder=temp_folder,
-        output_rs_filepath=rs_filepath,
+        output_rs_filepath=temp_rs_filepath,
         model_name="MRCNN_Brachy"
     )
 
     # Step 3. gen rp in the temp folder
     generate_rp_by_ct_rs_folder(
         input_ct_rs_folder=temp_folder,
-        output_rp_filepath=os.path.join(temp_folder, r"RP.output.dcm")
+        output_rp_filepath=temp_rp_filepath
     )
 
     # Step 4. copy rs and rp file into output_folder
-    print("temp_folder = ".format(temp_folder))
-    for file in os.listdir(temp_folder):
-        filepath = os.path.join(temp_folder, file)
-        try:
-            fp = pydicom.read_file(filepath)
-            if fp.Modality == "RTDOSE":
-                rd_src_filepath = filepath
-                rd_dst_filepath = os.path.join(output_folder, os.path.join(output_folder, os.path.basename(rd_src_filepath)))
-                copyfile(rd_src_filepath, rd_dst_filepath)
-            elif fp.Modality == "RTSTRUCT":
-                rs_src_filepath = filepath
-                rs_dst_filepath = os.path.join(output_folder, os.path.join(output_folder, os.path.basename(rs_src_filepath)))
-            copyfile(rs_src_filepath, rs_dst_filepath)
-        except:
-            pass
+    rs_src_filepath = temp_rs_filepath
+    rs_dst_filepath = os.path.join(output_folder, os.path.basename(temp_rs_filepath))
+    copyfile(rs_src_filepath, rs_dst_filepath)
+    rp_src_filepath = temp_rp_filepath
+    rp_dst_filepath = os.path.join(output_folder, os.path.basename(temp_rp_filepath))
+    copyfile(rp_src_filepath, rp_dst_filepath)
+    print("rs_dst_filepath = {}".format(rs_dst_filepath))
+    print("rp_dst_filepath = {}".format(rp_dst_filepath))
+
+
 
 
 

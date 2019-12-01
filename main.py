@@ -171,8 +171,8 @@ def main(argv):
         print("$ python main.py -i ShowCase01Test-Input-29059811 -o ShowCase01Test-Output-29059811")
 
 if __name__ == "__main__":
-    #dev_test_code_running()
-    main(sys.argv[1:])
+    dev_test_code_running()
+    #main(sys.argv[1:])
 
     exit()
 

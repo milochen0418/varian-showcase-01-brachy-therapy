@@ -30,87 +30,6 @@ DEVICE =  "/gpu:0"
 
 
 
-def get_dataset():
-    import Mult_Class_Brachy
-    # The way that we use dataset is because
-    # We want to use the mapping table dataset.class_names[ci] to convert id into class name.
-    # for example
-
-    #    self.add_class("Neck", 23, "GTV-N")
-    #    self.add_class("Neck", 24, "CTV-L")
-    #    self.add_class("Neck", 25, "R't_kidney")
-    #    self.add_class("Neck", 26, "L't_kidney")
-    #    self.add_class("Neck", 27, "GTV-T")
-    #    We can get "GTV-T" class string by dataset.class_names[27]
-
-    # changed by milochen
-    # import Mult_Class_Brachy as maskrcnn
-    '''
-    if "" != "":
-        import Mult_Class as maskrcnn
-    else:
-        import Mult_Class_Brachy as maskrcnn
-    '''
-
-
-    # Load validation dataset
-    # changed by milochen
-    # dataset = Mult_Class.NeckDataset()
-    dataset = Mult_Class_Brachy.NeckDataset()
-    # dataset = maskrcnn.NeckDataset()
-
-    CLASS_DIR = os.path.join("datasets_dicom")
-    dataset.load_Neck(CLASS_DIR, "val")
-
-    # Must call before using the dataset
-    dataset.prepare()
-    #print("print dateset")
-    #print(dataset)
-    return dataset
-
-
-def get_model():
-    #MASKRCNN_MODEL_WEIGHT_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
-    MASKRCNN_MODEL_WEIGHT_FILEPATH = r"../ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
-    import tensorflow as tf
-    # changed by milochen
-    # import Mult_Class
-    import Mult_Class_Brachy
-    import mrcnn.model as modellib
-    # 讀取檔案的資料夾
-    # changed by milochen
-    # config = Mult_Class.NeckConfig()
-    # config = Mult_Class_Brachy.NeckConfig()
-    config = Mult_Class_Brachy.NeckConfig()
-
-    # Override the training configurations with a few
-    # changes for inferencing.
-    # 對GPU的設計
-    class InferenceConfig(config.__class__):
-        # Run detection on one image at a time
-        GPU_COUNT = 1
-        IMAGES_PER_GPU = 1
-    config = InferenceConfig()
-
-    # Create model in inference mode
-    # changed by milochen by Sac's suggestion
-    # with tf.device(DEVICE):
-    #    model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
-    with tf.device(DEVICE):
-        model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
-
-    # Or, load the last model you trained
-    # weights_path = model.find_last()
-    # weights_path = r"D:\WatchFolder\mask_rcnn_neck_K8s_0030.h5"
-    weights_path = MASKRCNN_MODEL_WEIGHT_FILEPATH
-    # Load weights
-    print('model.load_weight start')
-    model.load_weights(weights_path, by_name=True)
-    print('model.load_weight end')
-    # Test
-    model.detect([np.zeros([512, 512, 3])])
-    return model
-
 def to_json(class_idsss, masksss, dataset):
     cn_list = []
     dict_value_newT = []
@@ -172,12 +91,97 @@ def AI_process_get_predict_result(filelist, model_name):
 
 def MRCNN_Brachy_AI_process(filelist):
     print("MRCNN_Brachy_AI_process is calling with filelist = {}".format(filelist) )
+    def get_dataset():
+        import Mult_Class_Brachy
+        # The way that we use dataset is because
+        # We want to use the mapping table dataset.class_names[ci] to convert id into class name.
+        # for example
+
+        #    self.add_class("Neck", 23, "GTV-N")
+        #    self.add_class("Neck", 24, "CTV-L")
+        #    self.add_class("Neck", 25, "R't_kidney")
+        #    self.add_class("Neck", 26, "L't_kidney")
+        #    self.add_class("Neck", 27, "GTV-T")
+        #    We can get "GTV-T" class string by dataset.class_names[27]
+
+        # changed by milochen
+        # import Mult_Class_Brachy as maskrcnn
+        '''
+        if "" != "":
+            import Mult_Class as maskrcnn
+        else:
+            import Mult_Class_Brachy as maskrcnn
+        '''
+
+        # Load validation dataset
+        # changed by milochen
+        # dataset = Mult_Class.NeckDataset()
+        dataset = Mult_Class_Brachy.NeckDataset()
+        # dataset = maskrcnn.NeckDataset()
+
+        CLASS_DIR = os.path.join("datasets_dicom")
+        dataset.load_Neck(CLASS_DIR, "val")
+
+        # Must call before using the dataset
+        dataset.prepare()
+        # print("print dateset")
+        # print(dataset)
+        return dataset
+    def get_model():
+        # MASKRCNN_MODEL_WEIGHT_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
+        MASKRCNN_MODEL_WEIGHT_FILEPATH = r"../ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
+        import tensorflow as tf
+        # changed by milochen
+        # import Mult_Class
+        import Mult_Class_Brachy
+        import mrcnn.model as modellib
+        # 讀取檔案的資料夾
+        # changed by milochen
+        # config = Mult_Class.NeckConfig()
+        # config = Mult_Class_Brachy.NeckConfig()
+        config = Mult_Class_Brachy.NeckConfig()
+
+        # Override the training configurations with a few
+        # changes for inferencing.
+        # 對GPU的設計
+        class InferenceConfig(config.__class__):
+            # Run detection on one image at a time
+            GPU_COUNT = 1
+            IMAGES_PER_GPU = 1
+
+        config = InferenceConfig()
+
+        # Create model in inference mode
+        # changed by milochen by Sac's suggestion
+        # with tf.device(DEVICE):
+        #    model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
+        with tf.device(DEVICE):
+            model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
+
+        # Or, load the last model you trained
+        # weights_path = model.find_last()
+        # weights_path = r"D:\WatchFolder\mask_rcnn_neck_K8s_0030.h5"
+        weights_path = MASKRCNN_MODEL_WEIGHT_FILEPATH
+        # Load weights
+        print('model.load_weight start')
+        model.load_weights(weights_path, by_name=True)
+        print('model.load_weight end')
+        # Test
+        model.detect([np.zeros([512, 512, 3])])
+        return model
     dataset = get_dataset()
     model = get_model()
     label_id_mask = get_label_id_mask(dataset, model, filelist)
     return label_id_mask
 
 def get_label_id_mask(dataset, model, ct_filelist):
+    """
+
+    :param dataset:
+    :param model:
+    :param ct_filelist:
+    :return:
+    """
     print("get_label_id_mask is calling")
 
     label_id_mask = defaultdict(dict)

@@ -1,36 +1,8 @@
-
-import os
-import sys
-import pydicom
+import os, sys, pydicom
 from decimal import Decimal
 from collections import defaultdict
-import numpy as np
 from skimage.measure import find_contours
-
-import random
-import copy
-
-# Root directory of the project
-ROOT_DIR = os.path.abspath(".")
-
-# Import Mask RCNN
-sys.path.append(ROOT_DIR)  # To find local version of the library
-
-# Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-
-# config.display()
-
-# Device to load the neural network on.
-# Useful if you're training a model on the same
-# machine, in which case use CPU and leave the
-# GPU for training.
-#DEVICE = "/cpu:0"  # /cpu:0 or /gpu:0
-DEVICE =  "/gpu:0"
-
-
-
-
+import numpy as np
 
 def AI_process_get_predict_result(filelist, model_name):
     """
@@ -59,8 +31,6 @@ def AI_process_get_predict_result(filelist, model_name):
         return MRCNN_Breast_AI_process(filelist)
     else:
         return None
-
-
 def MRCNN_Breast_AI_process(filelist):
     #TODO
     return None
@@ -103,6 +73,23 @@ def MRCNN_Brachy_AI_process(filelist):
         # print(dataset)
         return dataset
     def get_model():
+        # Root directory of the project
+        ROOT_DIR = os.path.abspath(".")
+
+        # Import Mask RCNN
+        sys.path.append(ROOT_DIR)  # To find local version of the library
+
+        # Directory to save logs and trained model
+        MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+
+        # config.display()
+        # Device to load the neural network on.
+        # Useful if you're training a model on the same
+        # machine, in which case use CPU and leave the
+        # GPU for training.
+        # DEVICE = "/cpu:0"  # /cpu:0 or /gpu:0
+        DEVICE = "/gpu:0"
+
         # MASKRCNN_MODEL_WEIGHT_FILEPATH = r"C:/Users/Milo/Desktop/Milo/ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
         MASKRCNN_MODEL_WEIGHT_FILEPATH = r"../ModelsAndRSTemplates/Brachy/MaskRCNN_ModelWeight/mask_rcnn_neck_0082.h5"
         import tensorflow as tf
@@ -148,7 +135,6 @@ def MRCNN_Brachy_AI_process(filelist):
     model = get_model()
     label_id_mask = get_label_id_mask(dataset, model, filelist)
     return label_id_mask
-
 def get_label_id_mask(dataset, model, ct_filelist):
     """
 

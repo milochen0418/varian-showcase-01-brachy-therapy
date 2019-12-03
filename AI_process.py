@@ -70,6 +70,15 @@ def AI_process_by_folder(folder ,model_name):
 
 #def AI_process(filelist, model_name):
 def AI_process_get_predict_result(filelist, model_name):
+    """
+    Check correctness of CT filelist and dispatch suitable model by model_name
+    :param filelist:
+        CT filelist
+    :param model_name:
+        The name of AI model
+    :return:
+        return AI predict result of filelist
+    """
     print("AI_process is calling...")
     print("with model_name = {} and filelist = {}".format(model_name, filelist) )
     # PS: Assume input CT files folder that only put one Study Case for one patient
@@ -81,14 +90,17 @@ def AI_process_get_predict_result(filelist, model_name):
         print("filelist is Empty")
         return None
 
-    # model_name check
-    if model_name != "MRCNN_Brachy":
-        print("model_name is not correct, please try MRCNN_Brachy")
+    if model_name == "MRCNN_Brachy":
+        return MRCNN_Brachy_AI_process(filelist)
+    elif model_name == "MRCNN_Breast":
+        return MRCNN_Breast_AI_process(filelist)
+    else:
         return None
 
-        # Process AI Case of MRCNN_Brachy
-    return MRCNN_Brachy_AI_process(filelist)
 
+def MRCNN_Breast_AI_process(filelist):
+    #TODO
+    return None
 def MRCNN_Brachy_AI_process(filelist):
     print("MRCNN_Brachy_AI_process is calling with filelist = {}".format(filelist) )
     def get_dataset():

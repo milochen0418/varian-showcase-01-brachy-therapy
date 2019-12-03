@@ -30,45 +30,8 @@ DEVICE =  "/gpu:0"
 
 
 
-def to_json(class_idsss, masksss, dataset):
-    cn_list = []
-    dict_value_newT = []
-    for i in range(len(class_idsss)):
-        mask = masksss[:, :, i]
-        padded_mask = np.zeros((mask.shape[0] + 2, mask.shape[1] + 2), dtype=np.uint8)
-        padded_mask[1:-1, 1:-1] = mask
-        contours = find_contours(padded_mask, 0.5)
-        dict_value = []
-        for verts in contours:
-            # Subtract the padding and flip (y, x) to (x, y)
-            verts = np.fliplr(verts) - 1
-            dict_value.append(verts)
-        dict_value_new = [dict_value[0].tolist()]
-        dict_value_newT.append(dict_value_new)
-        ci = class_idsss[i]
-        cn = dataset.class_names[ci]  # ci is id in class_ids, and cn is mean class name. e.g, ci=27 -> cn=GTV-T
-        # The id->class_name mapping is set by Multi_Class.py NeckDataset -> load_Neck -> self.add_class()
-        # for example, self.add_class("Neck", 27, "GTV-T")
-        cn_list.append(cn)
-    dict_json = dict(zip(cn_list, dict_value_newT))
-    return dict_json
 
-def AI_process_by_folder(folder ,model_name):
-    print("AI_process_by_folder is calling...")
-    print("with folder = {} and model_name = {}".format(folder, model_name) )
-    # PS: Assume input CT files folder that only put one Study Case for one patient
-    # folder check
-    if not os.path.isdir(folder):
-        print("{} is not exist folder", folder)
-        return None
 
-    filelist = []
-    for file in os.listdir(folder):
-        filepath = "{}\\{}".format(folder, file)
-        filelist.append(filepath)
-    return AI_process(filelist, model_name)
-
-#def AI_process(filelist, model_name):
 def AI_process_get_predict_result(filelist, model_name):
     """
     Check correctness of CT filelist and dispatch suitable model by model_name
@@ -194,8 +157,30 @@ def get_label_id_mask(dataset, model, ct_filelist):
     :param ct_filelist:
     :return:
     """
-    print("get_label_id_mask is calling")
+    def to_json(class_idsss, masksss, dataset):
+        cn_list = []
+        dict_value_newT = []
+        for i in range(len(class_idsss)):
+            mask = masksss[:, :, i]
+            padded_mask = np.zeros((mask.shape[0] + 2, mask.shape[1] + 2), dtype=np.uint8)
+            padded_mask[1:-1, 1:-1] = mask
+            contours = find_contours(padded_mask, 0.5)
+            dict_value = []
+            for verts in contours:
+                # Subtract the padding and flip (y, x) to (x, y)
+                verts = np.fliplr(verts) - 1
+                dict_value.append(verts)
+            dict_value_new = [dict_value[0].tolist()]
+            dict_value_newT.append(dict_value_new)
+            ci = class_idsss[i]
+            cn = dataset.class_names[ci]  # ci is id in class_ids, and cn is mean class name. e.g, ci=27 -> cn=GTV-T
+            # The id->class_name mapping is set by Multi_Class.py NeckDataset -> load_Neck -> self.add_class()
+            # for example, self.add_class("Neck", 27, "GTV-T")
+            cn_list.append(cn)
+        dict_json = dict(zip(cn_list, dict_value_newT))
+        return dict_json
 
+    print("get_label_id_mask is calling")
     label_id_mask = defaultdict(dict)
     for filepath in ct_filelist:
         # filepath is a absolute filepath for some ct file
@@ -234,15 +219,3 @@ def get_label_id_mask(dataset, model, ct_filelist):
     return label_id_mask
 
 
-
-def test_case_1():
-    model_name = "MRCNN_Brachy"
-    ct_folder = "TestCase_Input_CtFolder"
-    ret = AI_process_by_folder(ct_folder, model_name)
-    print("test_case_1() done")
-    #print(ret)
-
-
-
-if __name__ == "__main__":
-    test_case_1()

@@ -8,6 +8,7 @@ def log_current_time(tag_str, status):
     print("[{}/{}] = {}".format( tag_str, status,  nowtime_str ))
 def generate_rs_by_ct_folder(input_ct_folder, output_rs_filepath, model_name):
     """
+    Generate RS file by the folder that include CT files
     :param input_ct_folder:
     :param output_rs_filepath:
     :param model_name:
@@ -40,6 +41,12 @@ def generate_rs_by_ct_folder(input_ct_folder, output_rs_filepath, model_name):
     #os.path.join(temp_folder, r'RS.output.dcm')
     log_current_time("InterpolateWrapper_process", "STOP")
 def generate_rp_by_ct_rs_folder(input_ct_rs_folder, output_rp_filepath):
+    """
+    Generate output RP file by the folder that include CT files and RS file
+    :param input_ct_rs_folder:
+    :param output_rp_filepath:
+    :return:
+    """
     from utilities import generate_metadata_to_dicom_dict
     from generate_rp_brachy_in_batch import get_dicom_dict
     from generate_rp_brachy_in_batch import generate_brachy_rp_file
@@ -133,8 +140,8 @@ def dev_test_code_running():
             input_ct_folder=input_folder,
             output_rs_rp_folder=output_folder,
             model_name="MRCNN_Brachy")
-
     example_of_gen_rs_rp()
+
     pass
 
 def main(argv):
